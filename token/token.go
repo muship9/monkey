@@ -49,8 +49,13 @@ type Token struct {
 }
 
 var keyWords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 // LookupIndent 与えられたトークンリテラルに対して適切な TokenType を返す
