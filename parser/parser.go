@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/shinp09/monkey/ast"
 	"github.com/shinp09/monkey/lexer"
 	"github.com/shinp09/monkey/token"
@@ -9,17 +10,28 @@ import (
 type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
+	errors    []string
 	peekToken token.Token
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{l: l, errors: []string{}}
 
 	// 2つトークンを読み込み、curToken と peekToken の両方がセットされる
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
+		t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
 
 // 字句解析器インスタンスへのポインタの NextToken() を繰り返し呼び、入力から次のトークンを取得する
@@ -57,6 +69,7 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
+// parseLetStatement 現在見ているトークンに基づいて *ast.LetStatement を構築
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 
@@ -88,6 +101,7 @@ func (p *Parser) peekTokenIs(t token.TokenType) bool {
 	return p.peekToken.Type == t
 }
 
+// expectPeek peekToken の型が正しい場合は nextToken を実行する
 func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
