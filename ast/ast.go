@@ -26,6 +26,14 @@ type LetStatement struct {
 	Value Expression
 }
 
+type ReturnStatement struct {
+	Token       token.Token // 'return' トークン
+	ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode()       {}
+func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
+
 // statementNode LetStatement の statement インターフェイス
 func (ls *LetStatement) statementNode() {}
 
